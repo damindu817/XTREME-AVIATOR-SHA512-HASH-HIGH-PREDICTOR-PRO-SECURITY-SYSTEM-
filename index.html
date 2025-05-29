@@ -101,31 +101,6 @@
       position: relative;
     }
 
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    .logo-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 12px;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-    }
-
-    .logo-icon svg {
-      width: 24px;
-      height: 24px;
-      color: white;
-    }
-
     .title {
       font-size: 1.8rem;
       font-weight: 700;
@@ -278,11 +253,16 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      animation: fadeIn 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+      animation: fadeIn 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6) forwards;
       opacity: 0;
       height: 0;
       overflow: hidden;
       transition: all 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; height: 0; padding: 0 1.25rem; }
+      to { opacity: 1; height: auto; padding: 1.25rem; }
     }
 
     .auth-status.visible {
@@ -376,6 +356,38 @@
       100% { transform: translateY(-100vh) rotate(360deg); }
     }
 
+    .dashboard-view {
+      display: none;
+      text-align: center;
+    }
+
+    .dashboard-view h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--neon-blue);
+    }
+
+    .dashboard-view p {
+      margin-bottom: 2rem;
+    }
+
+    .redirect-btn {
+      background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .redirect-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
     @media (max-width: 480px) {
       .container {
         padding: 1.75rem;
@@ -399,19 +411,12 @@
   
   <div class="container">
     <div class="header">
-      <div class="logo">
-        <div class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-          </svg>
-        </div>
-        <h1 class="title">XTREME AVIATOR</h1>
-      </div>
+      <h1 class="title">XTREME AVIATOR</h1>
       <h2 class="subtitle">SHA512 HASH HIGH PREDICTOR PRO</h2>
       <p class="tagline">Advanced prediction algorithm for optimal results</p>
     </div>
 
-    <div class="auth-form">
+    <div id="authForm" class="auth-form">
       <form id="loginForm">
         <div class="form-group">
           <label class="form-label" for="accessKey">
@@ -445,6 +450,12 @@
         <span>Military-Grade AES-256 Encryption</span>
       </div>
     </div>
+
+    <div id="dashboardView" class="dashboard-view">
+      <h2>Welcome to XTREME AVIATOR PRO</h2>
+      <p>You have successfully authenticated with PRO access level.</p>
+      <button id="redirectBtn" class="redirect-btn">Continue to Dashboard</button>
+    </div>
   </div>
 
   <script>
@@ -457,7 +468,7 @@
         admin: "1a3b5c7d9e0f2a4b6c8d0e1f3a5b7c9d1e2f4a6b8c0d2e3f5a7b9c1d3e4f6a8b0c2d4e5f7a9b1c3d5e6f8a0b2c4d6e7f9a1b3c5d7e8f0a2b4c6d8e9f1a3b5c7d9e0f2"
       },
       SALT: "XTREME_AVIATOR_ULTRA_SECURE_SALT_@2023_PRO",
-      SESSION_TIMEOUT: 3600000,
+      SESSION_TIMEOUT: 3600000 * 24 * 7, // 1 week
       CORRECT_PASSWORD: "Xtr3m3@Av1at0r$HA512!Pr0#2023",
       REDIRECT_URL: "https://damindu817.github.io/Xtreme-Aviator-SHA512-Hash-High-Predictor-Pro/"
     };
@@ -498,14 +509,17 @@
 
     // DOM Elements
     const form = document.getElementById("loginForm");
+    const authForm = document.getElementById("authForm");
     const authStatus = document.getElementById("authStatus");
     const submitBtn = document.getElementById("submitBtn");
     const accessKey = document.getElementById("accessKey");
+    const dashboardView = document.getElementById("dashboardView");
+    const redirectBtn = document.getElementById("redirectBtn");
 
     // Initialize particles
     initParticles();
 
-    // Show status message
+    // Show status message with smooth animation
     function showStatus(type, message) {
       const icon = authStatus.querySelector('.status-icon');
       const msg = authStatus.querySelector('.status-message');
@@ -523,7 +537,7 @@
       icon.innerHTML = iconSvg;
       msg.textContent = message;
       
-      // Set class and show
+      // Set class and show with animation
       authStatus.className = `auth-status ${type} visible`;
     }
 
@@ -548,6 +562,12 @@
       }
     }
 
+    // Show dashboard view
+    function showDashboardView() {
+      authForm.style.display = 'none';
+      dashboardView.style.display = 'block';
+    }
+
     // Handle successful authentication
     function handleAuthSuccess(tier) {
       const now = new Date().getTime();
@@ -560,15 +580,18 @@
       submitBtn.disabled = true;
       accessKey.disabled = true;
       
-      // Show loading status before redirect
+      // Show dashboard view after a delay
       setTimeout(() => {
-        showStatus('loading', 'Preparing secure dashboard...');
-        
-        // Redirect after 8 seconds
-        setTimeout(() => {
-          window.location.href = SECURITY_CONFIG.REDIRECT_URL;
-        }, 8000);
+        showDashboardView();
       }, 2000);
+    }
+
+    // Redirect to external URL
+    function redirectToDashboard() {
+      showStatus('loading', 'Redirecting to dashboard...');
+      setTimeout(() => {
+        window.location.href = SECURITY_CONFIG.REDIRECT_URL;
+      }, 1500);
     }
 
     // Form submission
@@ -587,7 +610,9 @@
       try {
         // First check the password directly
         if (key === SECURITY_CONFIG.CORRECT_PASSWORD) {
-          handleAuthSuccess('pro');
+          setTimeout(() => {
+            handleAuthSuccess('pro');
+          }, 1500);
         } else {
           // Add random delay to prevent timing attacks
           setTimeout(async () => {
@@ -617,6 +642,9 @@
       }
     });
 
+    // Redirect button click handler
+    redirectBtn.addEventListener("click", redirectToDashboard);
+
     // Clear sensitive data when page is hidden
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === 'hidden') {
@@ -628,9 +656,7 @@
     window.addEventListener('load', () => {
       const currentTier = checkAuth();
       if (currentTier) {
-        showStatus('success', `Welcome back! ${currentTier.toUpperCase()} access active.`);
-        submitBtn.disabled = true;
-        accessKey.disabled = true;
+        showDashboardView();
       }
     });
   </script>
