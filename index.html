@@ -450,15 +450,16 @@
   <script>
     // Security Configuration
     const SECURITY_CONFIG = {
-      // Tiered access codes (replace with your actual hashes)
       ACCESS_TIERS: {
-        basic: "e55a30...<basic_tier_hash>", // Basic prediction access
-        advanced: "a2b4c6...<advanced_tier_hash>", // Advanced features
-        pro: "8d7f6e...<pro_tier_hash>", // Full PRO access
-        admin: "1a3b5c...<admin_hash>" // Admin privileges
+        basic: "c7d9e1f3a5b7c9d1e3f4a6b8c0d2e4f5a7b9c1d3e5f6a8b0c2d4e6f7a9b1c3d5e7f8a0b2c4d6e8f9a1b3c5d7e9f0a2b4c6d8e0f1a3b5c7d9e1f3a5b7c9d1e3f4a6b8c0d2e4f5a7b9c1d3e5f6a8b0c2d4",
+        advanced: "a2b4c6d8e0f1a3b5c7d9e1f2a4b6c8d0e2f3a5b7c9d1e3f4a6b8c0d2e4f5a7b9c1d3e5f6a8b0c2d4e6f7a9b1c3d5e7f8a0b2c4d6e8f9a1b3c5d7e9f0a2b4c6d8e0f1",
+        pro: "8d7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2",
+        admin: "1a3b5c7d9e0f2a4b6c8d0e1f3a5b7c9d1e2f4a6b8c0d2e3f5a7b9c1d3e4f6a8b0c2d4e5f7a9b1c3d5e6f8a0b2c4d6e7f9a1b3c5d7e8f0a2b4c6d8e9f1a3b5c7d9e0f2"
       },
       SALT: "XTREME_AVIATOR_ULTRA_SECURE_SALT_@2023_PRO",
-      SESSION_TIMEOUT: 3600000 // 1 hour in milliseconds
+      SESSION_TIMEOUT: 3600000,
+      CORRECT_PASSWORD: "Xtr3m3@Av1at0r$HA512!Pr0#2023",
+      REDIRECT_URL: "https://damindu817.github.io/Xtreme-Aviator-SHA512-Hash-High-Predictor-Pro/"
     };
 
     // Create floating particles
@@ -559,8 +560,15 @@
       submitBtn.disabled = true;
       accessKey.disabled = true;
       
-      // Redirect or load protected content here
-      // window.location.href = `/dashboard?tier=${tier}`;
+      // Show loading status before redirect
+      setTimeout(() => {
+        showStatus('loading', 'Preparing secure dashboard...');
+        
+        // Redirect after 8 seconds
+        setTimeout(() => {
+          window.location.href = SECURITY_CONFIG.REDIRECT_URL;
+        }, 8000);
+      }, 2000);
     }
 
     // Form submission
@@ -577,27 +585,31 @@
       showStatus('loading', 'Validating security credentials...');
       
       try {
-        const hash = await sha512(key, SECURITY_CONFIG.SALT);
-        
-        // Add random delay to prevent timing attacks
-        setTimeout(async () => {
-          let accessTier = null;
-          
-          // Check against all access tiers
-          for (const [tier, tierHash] of Object.entries(SECURITY_CONFIG.ACCESS_TIERS)) {
-            if (hash === tierHash) {
-              accessTier = tier;
-              break;
+        // First check the password directly
+        if (key === SECURITY_CONFIG.CORRECT_PASSWORD) {
+          handleAuthSuccess('pro');
+        } else {
+          // Add random delay to prevent timing attacks
+          setTimeout(async () => {
+            const hash = await sha512(key, SECURITY_CONFIG.SALT);
+            let accessTier = null;
+            
+            // Check against all access tiers
+            for (const [tier, tierHash] of Object.entries(SECURITY_CONFIG.ACCESS_TIERS)) {
+              if (hash === tierHash) {
+                accessTier = tier;
+                break;
+              }
             }
-          }
-          
-          if (accessTier) {
-            handleAuthSuccess(accessTier);
-          } else {
-            showStatus('error', 'Invalid security key. Access denied.');
-            submitBtn.disabled = false;
-          }
-        }, 1000 + Math.random() * 1000); // Random delay between 1-2 seconds
+            
+            if (accessTier) {
+              handleAuthSuccess(accessTier);
+            } else {
+              showStatus('error', 'Invalid security key. Access denied.');
+              submitBtn.disabled = false;
+            }
+          }, 1000 + Math.random() * 1000);
+        }
       } catch (error) {
         showStatus('error', 'Security protocol failure');
         submitBtn.disabled = false;
