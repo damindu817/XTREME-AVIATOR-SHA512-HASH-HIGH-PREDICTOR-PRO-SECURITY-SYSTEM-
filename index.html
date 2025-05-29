@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>XTREME AVIATOR SHA512 HASH HIGH PREDICTOR PRO</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap">
   <style>
@@ -25,6 +25,12 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     body {
@@ -41,6 +47,7 @@
       padding: 1rem;
       position: relative;
       overflow-x: hidden;
+      touch-action: manipulation;
     }
 
     .bg-grid {
@@ -519,6 +526,14 @@
     // Initialize particles
     initParticles();
 
+    // Prevent copy/paste and zooming
+    document.addEventListener('copy', (e) => e.preventDefault());
+    document.addEventListener('paste', (e) => e.preventDefault());
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
+
     // Show status message with smooth animation
     function showStatus(type, message) {
       const icon = authStatus.querySelector('.status-icon');
@@ -586,11 +601,12 @@
       }, 2000);
     }
 
-    // Redirect to external URL
+    // Redirect to external URL and prevent going back
     function redirectToDashboard() {
       showStatus('loading', 'Redirecting to dashboard...');
       setTimeout(() => {
-        window.location.href = SECURITY_CONFIG.REDIRECT_URL;
+        // Replace the current history entry
+        window.location.replace(SECURITY_CONFIG.REDIRECT_URL);
       }, 1500);
     }
 
@@ -657,6 +673,13 @@
       const currentTier = checkAuth();
       if (currentTier) {
         showDashboardView();
+      }
+    });
+
+    // Prevent going back after redirect
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        window.location.reload();
       }
     });
   </script>
