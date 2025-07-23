@@ -171,7 +171,7 @@
       font-size: 1rem;
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(2, 6, 23, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       color: var(--text-lighter);
@@ -182,7 +182,6 @@
       outline: none;
       border-color: var(--neon-blue);
       box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
-      background: rgba(255, 255, 255, 0.15);
     }
 
     .email-input::before {
@@ -502,7 +501,6 @@
       signInWithEmailAndPassword,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
     // Your Firebase configuration
     const firebaseConfig = {
@@ -517,7 +515,6 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const functions = getFunctions(app);
 
     // DOM Elements
     const form = document.getElementById("loginForm");
@@ -579,38 +576,12 @@
       dashboardView.style.display = 'block';
     }
 
-    // Secure URL redirection using Firebase Functions
-    async function redirectToDashboard() {
-      showStatus('loading', 'Requesting secure dashboard access...');
-      
-      try {
-        // First try to get the URL from Firebase Function
-        try {
-          const getDashboardUrl = httpsCallable(functions, 'getDashboardUrl');
-          const result = await getDashboardUrl();
-          
-          if (result.data.url) {
-            showStatus('success', 'Redirecting to secure dashboard...');
-            setTimeout(() => {
-              window.location.href = result.data.url;
-            }, 1500);
-            return;
-          }
-        } catch (error) {
-          console.log('Firebase Function call failed, falling back to direct URL');
-        }
-
-        // Fallback to direct URL if Firebase Function fails
-        const fallbackUrl = 'https://xtreme-aviator-pro-dashboard.com'; // Replace with your actual dashboard URL
-        showStatus('success', 'Redirecting to dashboard...');
-        setTimeout(() => {
-          window.location.href = fallbackUrl;
-        }, 1500);
-        
-      } catch (error) {
-        console.error('Redirect error:', error);
-        showStatus('error', 'Failed to access dashboard. Please try again later.');
-      }
+    // Redirect to external URL
+    function redirectToDashboard() {
+      showStatus('loading', 'Redirecting to dashboard...');
+      setTimeout(() => {
+        window.location.replace("https://damindu817.github.io/Xtreme-Aviator-SHA512-Hash-High-Predictor-Pro/");
+      }, 1500);
     }
 
     // Form submission
@@ -629,7 +600,7 @@
       
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        showStatus('success', 'Authentication successful! Loading dashboard...');
+        showStatus('success', 'Authentication successful! Redirecting...');
         setTimeout(() => {
           showDashboardView();
         }, 2000);
@@ -687,12 +658,6 @@
       if (event.persisted) {
         window.location.reload();
       }
-    });
-
-    // Prevent initial page jump by hiding elements until fully loaded
-    document.body.style.visibility = 'hidden';
-    window.addEventListener('load', () => {
-      document.body.style.visibility = 'visible';
     });
   </script>
 </body>
