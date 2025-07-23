@@ -161,11 +161,11 @@
       color: var(--neon-blue);
     }
 
-    .password-input {
+    .email-input, .password-input {
       position: relative;
     }
 
-    .password-input input {
+    .email-input input, .password-input input {
       width: 100%;
       padding: 1rem 1rem 1rem 3rem;
       font-size: 1rem;
@@ -178,10 +178,23 @@
       transition: all 0.3s ease;
     }
 
-    .password-input input:focus {
+    .email-input input:focus, .password-input input:focus {
       outline: none;
       border-color: var(--neon-blue);
       box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
+    }
+
+    .email-input::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b5cf6'%3E%3Cpath d='M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z' /%3E%3Cpath d='M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z' /%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
     }
 
     .password-input::before {
@@ -426,18 +439,32 @@
     <div id="authForm" class="auth-form">
       <form id="loginForm">
         <div class="form-group">
-          <label class="form-label" for="accessKey">
+          <label class="form-label" for="email">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M15.75 1.5a6.75 6.75 0 00-6.651 7.906c.067.39-.032.717-.221.906l-6.5 6.499a3 3 0 00-.878 2.121v2.818c0 .414.336.75.75.75H6a.75.75 0 00.75-.75v-1.5h1.5A.75.75 0 009 19.5V18h1.5a.75.75 0 00.53-.22l2.658-2.658c.19-.189.517-.288.906-.22A6.75 6.75 0 1015.75 1.5zm0 3a.75.75 0 000 1.5A2.25 2.25 0 0118 8.25a.75.75 0 001.5 0 3.75 3.75 0 00-3.75-3.75z" clip-rule="evenodd" />
+              <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
+              <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
             </svg>
-            SECURITY KEY
+            EMAIL
           </label>
-          <div class="password-input">
-            <input type="password" id="accessKey" placeholder="Enter multi-factor access code" required autocomplete="off" />
+          <div class="email-input">
+            <input type="email" id="email" placeholder="Enter your email" required autocomplete="username" />
           </div>
         </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+            </svg>
+            PASSWORD
+          </label>
+          <div class="password-input">
+            <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password" />
+          </div>
+        </div>
+
         <button type="submit" class="submit-btn" id="submitBtn">
-          AUTHENTICATE
+          LOGIN
         </button>
       </form>
       
@@ -454,7 +481,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
           <path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
         </svg>
-        <span>Military-Grade AES-256 Encryption</span>
+        <span>Firebase Secure Authentication</span>
       </div>
     </div>
 
@@ -465,20 +492,39 @@
     </div>
   </div>
 
-  <script>
-    // Security Configuration
-    const SECURITY_CONFIG = {
-      ACCESS_TIERS: {
-        basic: "c7d9e1f3a5b7c9d1e3f4a6b8c0d2e4f5a7b9c1d3e5f6a8b0c2d4e6f7a9b1c3d5e7f8a0b2c4d6e8f9a1b3c5d7e9f0a2b4c6d8e0f1a3b5c7d9e1f3a5b7c9d1e3f4a6b8c0d2e4f5a7b9c1d3e5f6a8b0c2d4",
-        advanced: "a2b4c6d8e0f1a3b5c7d9e1f2a4b6c8d0e2f3a5b7c9d1e3f4a6b8c0d2e4f5a7b9c1d3e5f6a8b0c2d4e6f7a9b1c3d5e7f8a0b2c4d6e8f9a1b3c5d7e9f0a2b4c6d8e0f1",
-        pro: "8d7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2",
-        admin: "1a3b5c7d9e0f2a4b6c8d0e1f3a5b7c9d1e2f4a6b8c0d2e3f5a7b9c1d3e4f6a8b0c2d4e5f7a9b1c3d5e6f8a0b2c4d6e7f9a1b3c5d7e8f0a2b4c6d8e9f1a3b5c7d9e0f2"
-      },
-      SALT: "XTREME_AVIATOR_ULTRA_SECURE_SALT_@2023_PRO",
-      SESSION_TIMEOUT: 3600000 * 24 * 7, // 1 week
-      CORRECT_PASSWORD: "Xtr3m3@Av1at0r$HA512!Pr0#2023",
-      REDIRECT_URL: "https://damindu817.github.io/Xtreme-Aviator-SHA512-Hash-High-Predictor-Pro/"
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCTjFroYjxB8VJ_OWPCl9oSKsfnOCYDA2M",
+      authDomain: "xtreme-aviator-sha512-hash.firebaseapp.com",
+      projectId: "xtreme-aviator-sha512-hash",
+      storageBucket: "xtreme-aviator-sha512-hash.appspot.com",
+      messagingSenderId: "1087307600596",
+      appId: "1:1087307600596:web:c2d7171d9c8c72381b6141"
     };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // DOM Elements
+    const form = document.getElementById("loginForm");
+    const authForm = document.getElementById("authForm");
+    const authStatus = document.getElementById("authStatus");
+    const submitBtn = document.getElementById("submitBtn");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const dashboardView = document.getElementById("dashboardView");
+    const redirectBtn = document.getElementById("redirectBtn");
 
     // Create floating particles
     function initParticles() {
@@ -489,16 +535,13 @@
         const particle = document.createElement('div');
         particle.classList.add('particle');
         
-        // Random size between 2px and 6px
         const size = Math.random() * 4 + 2;
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         
-        // Random position
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.bottom = `-${size}px`;
         
-        // Random animation duration (10s to 20s) and delay
         const duration = Math.random() * 10 + 10;
         particle.style.animationDuration = `${duration}s`;
         particle.style.animationDelay = `${Math.random() * 5}s`;
@@ -507,39 +550,11 @@
       }
     }
 
-    // SHA-512 Hashing with salt
-    async function sha512(str, salt = "") {
-      const saltedStr = str + salt;
-      const buf = await crypto.subtle.digest("SHA-512", new TextEncoder().encode(saltedStr));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // DOM Elements
-    const form = document.getElementById("loginForm");
-    const authForm = document.getElementById("authForm");
-    const authStatus = document.getElementById("authStatus");
-    const submitBtn = document.getElementById("submitBtn");
-    const accessKey = document.getElementById("accessKey");
-    const dashboardView = document.getElementById("dashboardView");
-    const redirectBtn = document.getElementById("redirectBtn");
-
-    // Initialize particles
-    initParticles();
-
-    // Prevent copy/paste and zooming
-    document.addEventListener('copy', (e) => e.preventDefault());
-    document.addEventListener('paste', (e) => e.preventDefault());
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-    document.addEventListener('gesturestart', (e) => e.preventDefault());
-    document.addEventListener('gesturechange', (e) => e.preventDefault());
-    document.addEventListener('gestureend', (e) => e.preventDefault());
-
     // Show status message with smooth animation
     function showStatus(type, message) {
       const icon = authStatus.querySelector('.status-icon');
       const msg = authStatus.querySelector('.status-message');
       
-      // Set icon based on type
       let iconSvg = '';
       if (type === 'loading') {
         iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" /></svg>`;
@@ -552,29 +567,7 @@
       icon.innerHTML = iconSvg;
       msg.textContent = message;
       
-      // Set class and show with animation
       authStatus.className = `auth-status ${type} visible`;
-    }
-
-    // Check existing authentication
-    function checkAuth() {
-      const authData = localStorage.getItem("xtremeAuth");
-      if (!authData) return false;
-      
-      try {
-        const { tier, timestamp } = JSON.parse(authData);
-        const now = new Date().getTime();
-        
-        // Check if session expired
-        if (now - timestamp > SECURITY_CONFIG.SESSION_TIMEOUT) {
-          localStorage.removeItem("xtremeAuth");
-          return false;
-        }
-        
-        return tier;
-      } catch {
-        return false;
-      }
     }
 
     // Show dashboard view
@@ -583,96 +576,80 @@
       dashboardView.style.display = 'block';
     }
 
-    // Handle successful authentication
-    function handleAuthSuccess(tier) {
-      const now = new Date().getTime();
-      localStorage.setItem("xtremeAuth", JSON.stringify({
-        tier,
-        timestamp: now
-      }));
-      
-      showStatus('success', `Authentication successful! ${tier.toUpperCase()} access granted.`);
-      submitBtn.disabled = true;
-      accessKey.disabled = true;
-      
-      // Show dashboard view after a delay
-      setTimeout(() => {
-        showDashboardView();
-      }, 2000);
-    }
-
-    // Redirect to external URL and prevent going back
+    // Redirect to external URL
     function redirectToDashboard() {
       showStatus('loading', 'Redirecting to dashboard...');
       setTimeout(() => {
-        // Replace the current history entry
-        window.location.replace(SECURITY_CONFIG.REDIRECT_URL);
+        window.location.replace("https://damindu817.github.io/Xtreme-Aviator-SHA512-Hash-High-Predictor-Pro/");
       }, 1500);
     }
 
     // Form submission
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const key = accessKey.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
       
-      if (!key) {
-        showStatus('error', 'Security key cannot be empty');
+      if (!email || !password) {
+        showStatus('error', 'Please enter both email and password');
         return;
       }
       
       submitBtn.disabled = true;
-      showStatus('loading', 'Validating security credentials...');
+      showStatus('loading', 'Authenticating...');
       
       try {
-        // First check the password directly
-        if (key === SECURITY_CONFIG.CORRECT_PASSWORD) {
-          setTimeout(() => {
-            handleAuthSuccess('pro');
-          }, 1500);
-        } else {
-          // Add random delay to prevent timing attacks
-          setTimeout(async () => {
-            const hash = await sha512(key, SECURITY_CONFIG.SALT);
-            let accessTier = null;
-            
-            // Check against all access tiers
-            for (const [tier, tierHash] of Object.entries(SECURITY_CONFIG.ACCESS_TIERS)) {
-              if (hash === tierHash) {
-                accessTier = tier;
-                break;
-              }
-            }
-            
-            if (accessTier) {
-              handleAuthSuccess(accessTier);
-            } else {
-              showStatus('error', 'Invalid security key. Access denied.');
-              submitBtn.disabled = false;
-            }
-          }, 1000 + Math.random() * 1000);
-        }
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        showStatus('success', 'Authentication successful! Redirecting...');
+        setTimeout(() => {
+          showDashboardView();
+        }, 2000);
       } catch (error) {
-        showStatus('error', 'Security protocol failure');
+        let errorMessage = 'Login failed: ';
+        switch(error.code) {
+          case 'auth/invalid-email':
+            errorMessage += 'Invalid email address';
+            break;
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+            errorMessage += 'Invalid email or password';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage += 'Too many attempts. Try again later';
+            break;
+          default:
+            errorMessage += error.message;
+        }
+        showStatus('error', errorMessage);
         submitBtn.disabled = false;
-        console.error("Authentication error:", error);
       }
     });
 
     // Redirect button click handler
     redirectBtn.addEventListener("click", redirectToDashboard);
 
-    // Clear sensitive data when page is hidden
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === 'hidden') {
-        accessKey.value = '';
+    // Check auth state on page load
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        showDashboardView();
       }
     });
 
-    // Check if already authenticated on page load
-    window.addEventListener('load', () => {
-      const currentTier = checkAuth();
-      if (currentTier) {
-        showDashboardView();
+    // Initialize particles
+    initParticles();
+
+    // Prevent copy/paste and zooming
+    document.addEventListener('copy', (e) => e.preventDefault());
+    document.addEventListener('paste', (e) => e.preventDefault());
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
+
+    // Clear password when page is hidden
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === 'hidden') {
+        passwordInput.value = '';
       }
     });
 
