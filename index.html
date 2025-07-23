@@ -439,7 +439,7 @@
     <div id="authForm" class="auth-form">
       <form id="loginForm">
         <div class="form-group">
-          <label class="form-label" for="email">
+          <label class="form-label" for="xtreme-email">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
               <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
@@ -447,19 +447,19 @@
             EMAIL
           </label>
           <div class="email-input">
-            <input type="email" id="email" placeholder="Enter your email" required autocomplete="username" />
+            <input type="email" id="xtreme-email" name="xtreme-email" placeholder="Enter your email" required autocomplete="off" data-lpignore="true" />
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="password">
+          <label class="form-label" for="xtreme-password">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
             </svg>
             PASSWORD
           </label>
           <div class="password-input">
-            <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password" />
+            <input type="password" id="xtreme-password" name="xtreme-password" placeholder="Enter your password" required autocomplete="new-password" data-lpignore="true" />
           </div>
         </div>
 
@@ -501,7 +501,6 @@
       signInWithEmailAndPassword,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
     // Your Firebase configuration
     const firebaseConfig = {
@@ -516,15 +515,14 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const functions = getFunctions(app);
 
     // DOM Elements
     const form = document.getElementById("loginForm");
     const authForm = document.getElementById("authForm");
     const authStatus = document.getElementById("authStatus");
     const submitBtn = document.getElementById("submitBtn");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
+    const emailInput = document.getElementById("xtreme-email");
+    const passwordInput = document.getElementById("xtreme-password");
     const dashboardView = document.getElementById("dashboardView");
     const redirectBtn = document.getElementById("redirectBtn");
 
@@ -578,26 +576,12 @@
       dashboardView.style.display = 'block';
     }
 
-    // Secure URL redirection using Firebase Functions
-    async function redirectToDashboard() {
-      showStatus('loading', 'Requesting secure dashboard access...');
-      
-      try {
-        const getDashboardUrl = httpsCallable(functions, 'getDashboardUrl');
-        const result = await getDashboardUrl();
-        
-        if (result.data.url) {
-          showStatus('success', 'Redirecting to secure dashboard...');
-          setTimeout(() => {
-            window.location.href = result.data.url;
-          }, 1500);
-        } else {
-          throw new Error('No URL returned from server');
-        }
-      } catch (error) {
-        console.error('Redirect error:', error);
-        showStatus('error', 'Failed to access dashboard. Please try again.');
-      }
+    // Redirect to external URL
+    function redirectToDashboard() {
+      showStatus('loading', 'Redirecting to dashboard...');
+      setTimeout(() => {
+        window.location.replace("https://damindu817.github.io/Xtreme-Aviator-SHA512-Hash-High-Predictor-Pro/");
+      }, 1500);
     }
 
     // Form submission
@@ -616,7 +600,7 @@
       
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        showStatus('success', 'Authentication successful! Loading dashboard...');
+        showStatus('success', 'Authentication successful! Redirecting...');
         setTimeout(() => {
           showDashboardView();
         }, 2000);
