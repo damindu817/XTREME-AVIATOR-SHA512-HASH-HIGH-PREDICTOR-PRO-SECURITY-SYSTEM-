@@ -526,6 +526,15 @@
     const dashboardView = document.getElementById("dashboardView");
     const redirectBtn = document.getElementById("redirectBtn");
 
+    // URL Obfuscation - Split into multiple parts and encoded
+    const urlPart1 = "aHR0cHM6Ly9kYW1pbmR1";
+    const urlPart2 = "ODE3LmdpdGh1Yi5pby9YdHJlbWUtQXZpYXRvci1TSEE1MTItSGFzaC1IaWdoLVByZWRpY3Rvci1Qcm8v";
+
+    // Function to get the dashboard URL
+    function getDashboardUrl() {
+      return atob(urlPart1 + urlPart2);
+    }
+
     // Create floating particles
     function initParticles() {
       const container = document.getElementById('particles');
@@ -580,7 +589,7 @@
     function redirectToDashboard() {
       showStatus('loading', 'Redirecting to dashboard...');
       setTimeout(() => {
-        window.location.replace("https://damindu817.github.io/Xtreme-Aviator-SHA512-Hash-High-Predictor-Pro/");
+        window.location.replace(getDashboardUrl());
       }, 1500);
     }
 
