@@ -171,7 +171,7 @@
       font-size: 1rem;
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
-      background: rgba(255, 255, 255, 0.1); /* Changed to lighter background */
+      background: rgba(2, 6, 23, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       color: var(--text-lighter);
@@ -182,7 +182,6 @@
       outline: none;
       border-color: var(--neon-blue);
       box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
-      background: rgba(255, 255, 255, 0.15); /* Slightly lighter on focus */
     }
 
     .email-input::before {
@@ -675,12 +674,6 @@
       if (event.persisted) {
         window.location.reload();
       }
-    });
-
-    // Prevent initial page jump by hiding elements until fully loaded
-    document.body.style.visibility = 'hidden';
-    window.addEventListener('load', () => {
-      document.body.style.visibility = 'visible';
     });
   </script>
 </body>
