@@ -317,6 +317,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
     .status-icon svg {
@@ -324,13 +325,79 @@
       height: 20px;
     }
 
-    .status-icon.loading svg {
-      animation: spin 1s linear infinite;
+    /* Security protocol icon animation (only when email entered and password focused) */
+    .status-icon.security-protocol svg {
+      animation: spinPulse 1.5s ease-in-out infinite;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    /* Enhanced loading animation */
+    .status-icon.loading svg {
+      animation: spinPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes spinPulse {
+      0% { transform: rotate(0deg); opacity: 0.8; }
+      50% { transform: rotate(180deg); opacity: 1; }
+      100% { transform: rotate(360deg); opacity: 0.8; }
+    }
+
+    /* Enhanced success animation */
+    .status-icon.success svg {
+      animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      80% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    /* Enhanced error animation */
+    .status-icon.error svg {
+      animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+      20%, 40%, 60%, 80% { transform: translateX(3px); }
+    }
+
+    /* Pulse effect for all status icons */
+    .status-icon::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border-radius: 50%;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .status-icon.security-protocol::after,
+    .status-icon.loading::after {
+      background: rgba(245, 158, 11, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    .status-icon.success::after {
+      background: rgba(16, 185, 129, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    .status-icon.error::after {
+      background: rgba(239, 68, 68, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      70% { transform: scale(1.3); opacity: 0; }
+      100% { transform: scale(0.8); opacity: 0; }
     }
 
     .security-badge {
@@ -532,6 +599,54 @@
     const dashboardView = document.getElementById("dashboardView");
     const redirectBtn = document.getElementById("redirectBtn");
 
+    // Track if email has been entered
+    let emailEntered = false;
+
+    // Function to animate the security protocol icon
+    function animateSecurityProtocol() {
+      const icon = authStatus.querySelector('.status-icon');
+      const msg = authStatus.querySelector('.status-message');
+      
+      // Add security-protocol class to icon
+      icon.classList.add('security-protocol');
+      
+      // Show the status message
+      authStatus.classList.add('visible');
+      
+      // Set the message
+      msg.textContent = 'Initializing security protocol';
+    }
+
+    // Function to stop the animation
+    function stopSecurityProtocolAnimation() {
+      const icon = authStatus.querySelector('.status-icon');
+      icon.classList.remove('security-protocol');
+    }
+
+    // Email input event listeners
+    emailInput.addEventListener('input', (e) => {
+      if (e.target.value.trim() !== '') {
+        emailEntered = true;
+      } else {
+        emailEntered = false;
+        stopSecurityProtocolAnimation();
+      }
+    });
+
+    // Password focus event listener
+    passwordInput.addEventListener('focus', () => {
+      if (emailEntered) {
+        animateSecurityProtocol();
+      }
+    });
+
+    // Password blur event listener
+    passwordInput.addEventListener('blur', () => {
+      if (passwordInput.value.trim() === '') {
+        stopSecurityProtocolAnimation();
+      }
+    });
+
     // Function to get the dashboard URL from Firebase Remote Config
     async function getDashboardUrl() {
       try {
@@ -577,6 +692,10 @@
     function showStatus(type, message) {
       const icon = authStatus.querySelector('.status-icon');
       const msg = authStatus.querySelector('.status-message');
+      
+      // Reset icon classes
+      icon.className = 'status-icon';
+      icon.classList.add(type);
       
       let iconSvg = '';
       if (type === 'loading') {
