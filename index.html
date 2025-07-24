@@ -501,6 +501,8 @@
       signInWithEmailAndPassword,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getRemoteConfig, fetchAndActivate, getValue } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-remote-config.js";
 
     // Your Firebase configuration
     const firebaseConfig = {
@@ -515,6 +517,10 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const remoteConfig = getRemoteConfig(app);
+    
+    // Set minimum fetch interval (in seconds)
+    remoteConfig.settings.minimumFetchIntervalMillis = 3600000; // 1 hour
 
     // DOM Elements
     const form = document.getElementById("loginForm");
@@ -526,13 +532,21 @@
     const dashboardView = document.getElementById("dashboardView");
     const redirectBtn = document.getElementById("redirectBtn");
 
-    // URL Obfuscation - Split into multiple parts and encoded
-    const urlPart1 = "aHR0cHM6Ly9kYW1pbmR1";
-    const urlPart2 = "ODE3LmdpdGh1Yi5pby9YdHJlbWUtQXZpYXRvci1TSEE1MTItSGFzaC1IaWdoLVByZWRpY3Rvci1Qcm8v";
-
-    // Function to get the dashboard URL
-    function getDashboardUrl() {
-      return atob(urlPart1 + urlPart2);
+    // Function to get the dashboard URL from Firebase Remote Config
+    async function getDashboardUrl() {
+      try {
+        // Fetch the latest parameter values
+        await fetchAndActivate(remoteConfig);
+        
+        // Get the encoded URL from Remote Config
+        const encodedUrl = getValue(remoteConfig, "secret_dashboard_url").asString();
+        
+        // Decode the URL
+        return atob(encodedUrl);
+      } catch (error) {
+        console.error("Error getting dashboard URL:", error);
+        return "#"; // Fallback URL
+      }
     }
 
     // Create floating particles
@@ -586,11 +600,16 @@
     }
 
     // Redirect to external URL
-    function redirectToDashboard() {
+    async function redirectToDashboard() {
       showStatus('loading', 'Redirecting to dashboard...');
-      setTimeout(() => {
-        window.location.replace(getDashboardUrl());
-      }, 1500);
+      try {
+        const url = await getDashboardUrl();
+        setTimeout(() => {
+          window.location.replace(url);
+        }, 1500);
+      } catch (error) {
+        showStatus('error', 'Failed to get dashboard URL');
+      }
     }
 
     // Form submission
