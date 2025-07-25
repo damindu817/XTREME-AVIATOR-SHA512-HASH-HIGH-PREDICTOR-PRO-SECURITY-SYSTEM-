@@ -265,6 +265,7 @@
       cursor: not-allowed;
     }
 
+    /* Fixed size for auth status box */
     .auth-status {
       margin-top: 2rem;
       padding: 1.25rem;
@@ -273,23 +274,17 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      animation: fadeIn 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6) forwards;
+      min-height: 80px; /* Fixed height */
       opacity: 0;
-      height: 0;
       overflow: hidden;
       transition: all 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; height: 0; padding: 0 1.25rem; }
-      to { opacity: 1; height: auto; padding: 1.25rem; }
+      visibility: hidden;
+      box-sizing: border-box;
     }
 
     .auth-status.visible {
       opacity: 1;
-      height: auto;
-      padding: 1.25rem;
-      margin-top: 2rem;
+      visibility: visible;
     }
 
     .auth-status.loading {
@@ -325,12 +320,10 @@
       height: 20px;
     }
 
-    /* Security protocol icon animation (only when email entered and password focused) */
     .status-icon.security-protocol svg {
       animation: spinPulse 1.5s ease-in-out infinite;
     }
 
-    /* Enhanced loading animation */
     .status-icon.loading svg {
       animation: spinPulse 1.5s ease-in-out infinite;
     }
@@ -341,7 +334,6 @@
       100% { transform: rotate(360deg); opacity: 0.8; }
     }
 
-    /* Enhanced success animation */
     .status-icon.success svg {
       animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     }
@@ -353,7 +345,6 @@
       100% { transform: scale(1); }
     }
 
-    /* Enhanced error animation */
     .status-icon.error svg {
       animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     }
@@ -364,7 +355,6 @@
       20%, 40%, 60%, 80% { transform: translateX(3px); }
     }
 
-    /* Pulse effect for all status icons */
     .status-icon::after {
       content: '';
       position: absolute;
@@ -607,13 +597,8 @@
       const icon = authStatus.querySelector('.status-icon');
       const msg = authStatus.querySelector('.status-message');
       
-      // Add security-protocol class to icon
       icon.classList.add('security-protocol');
-      
-      // Show the status message
       authStatus.classList.add('visible');
-      
-      // Set the message
       msg.textContent = 'Initializing security protocol';
     }
 
@@ -621,6 +606,7 @@
     function stopSecurityProtocolAnimation() {
       const icon = authStatus.querySelector('.status-icon');
       icon.classList.remove('security-protocol');
+      authStatus.classList.remove('visible');
     }
 
     // Email input event listeners
@@ -650,17 +636,12 @@
     // Function to get the dashboard URL from Firebase Remote Config
     async function getDashboardUrl() {
       try {
-        // Fetch the latest parameter values
         await fetchAndActivate(remoteConfig);
-        
-        // Get the encoded URL from Remote Config
         const encodedUrl = getValue(remoteConfig, "secret_dashboard_url").asString();
-        
-        // Decode the URL
         return atob(encodedUrl);
       } catch (error) {
         console.error("Error getting dashboard URL:", error);
-        return "#"; // Fallback URL
+        return "#";
       }
     }
 
@@ -693,7 +674,6 @@
       const icon = authStatus.querySelector('.status-icon');
       const msg = authStatus.querySelector('.status-message');
       
-      // Reset icon classes
       icon.className = 'status-icon';
       icon.classList.add(type);
       
@@ -775,10 +755,17 @@
     // Redirect button click handler
     redirectBtn.addEventListener("click", redirectToDashboard);
 
-    // Check auth state on page load
+    // Check auth state on page load - modified to hide login form if already authenticated
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        // Hide the login form immediately
+        authForm.style.display = 'none';
+        // Show the dashboard view
         showDashboardView();
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          redirectToDashboard();
+        }, 500);
       }
     });
 
