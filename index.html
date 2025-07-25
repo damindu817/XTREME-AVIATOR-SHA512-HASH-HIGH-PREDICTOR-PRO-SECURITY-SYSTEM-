@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>XTREME AVIATOR SHA512 HASH HIGH PREDICTOR PRO</title>
+  <title>XTREME AVIATOR SHA512 HASH PREDICTOR PRO</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap">
   <style>
     :root {
@@ -265,7 +265,6 @@
       cursor: not-allowed;
     }
 
-    /* Fixed size for auth status box */
     .auth-status {
       margin-top: 2rem;
       padding: 1.25rem;
@@ -274,7 +273,7 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      min-height: 80px; /* Fixed height */
+      min-height: 80px;
       opacity: 0;
       overflow: hidden;
       transition: all 0.4s ease;
@@ -489,7 +488,7 @@
   <div class="container">
     <div class="header">
       <h1 class="title">XTREME AVIATOR</h1>
-      <h2 class="subtitle">SHA512 HASH HIGH PREDICTOR PRO</h2>
+      <h2 class="subtitle">SHA512 HASH PREDICTOR PRO</h2>
       <p class="tagline">Advanced prediction algorithm for optimal results</p>
     </div>
 
@@ -755,17 +754,14 @@
     // Redirect button click handler
     redirectBtn.addEventListener("click", redirectToDashboard);
 
-    // Check auth state on page load - modified to hide login form if already authenticated
+    // Check auth state on page load - modified to only show dashboard view without auto-redirect
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // Hide the login form immediately
         authForm.style.display = 'none';
         // Show the dashboard view
         showDashboardView();
-        // Redirect to dashboard after a short delay
-        setTimeout(() => {
-          redirectToDashboard();
-        }, 500);
+        // No automatic redirect - wait for user to click the button
       }
     });
 
