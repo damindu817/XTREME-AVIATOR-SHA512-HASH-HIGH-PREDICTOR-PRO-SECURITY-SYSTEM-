@@ -464,6 +464,22 @@
       box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     }
 
+    /* WhatsApp Support Link Style */
+    .support-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: var(--neon-blue);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .support-link:hover {
+      color: var(--neon-pink);
+      text-decoration: underline;
+    }
+
     @media (max-width: 480px) {
       .container {
         padding: 1.75rem;
@@ -522,6 +538,13 @@
         <button type="submit" class="submit-btn" id="submitBtn">
           LOGIN
         </button>
+
+        <!-- Simple WhatsApp Support Link -->
+        <a href="https://wa.me/94701661588?text=I%20want%20to%20purchase%20an%20activation%20code%20for%20XTREME%20AVIATOR%20SHA512%20HASH%20PREDICTOR%20PRO" 
+           class="support-link" 
+           target="_blank">
+          Need activation details or support?
+        </a>
       </form>
       
       <div id="authStatus" class="auth-status">
