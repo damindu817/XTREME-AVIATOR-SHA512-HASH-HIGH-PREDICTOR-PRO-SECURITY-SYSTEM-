@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviator Pro - High Odd Prediction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #8b0000;
+            --accent: #ff3333;
+            --accent-light: #ff6666;
+            --dark: #111111;
+            --darker: #080808;
+            --light: #f5f5f5;
+            --light-gray: #aaaaaa;
+            --success: #00cc66;
+            --danger: #ff3333;
+            --warning: #ff9900;
+            --card-bg: rgba(25, 25, 25, 0.9);
+            --header-height: 70px;
+            --nav-width: 250px;
+            --nav-bottom-height: 70px;
+            --transition: all 0.3s ease;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--darker));
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            width: var(--nav-width);
+            background: rgba(20, 20, 20, 0.95);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .nav-logo {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 51, 51, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .nav-logo i {
+            font-size: 36px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .nav-logo h2 {
+            font-size: 20px;
+            color: var(--light);
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--light-gray);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 51, 51, 0.1);
+            color: var(--accent);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: rgba(20, 20, 20, 0.95);
+            position: fixed;
+            top: 0;
+            left: var(--nav-width);
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 90;
+            transition: var(--transition);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title i {
+            font-size: 32px;
+            color: var(--accent);
+            margin-right: 15px;
+        }
+
+        .header-title h1 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--nav-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            width: calc(100% - var(--nav-width));
+            min-height: calc(100vh - var(--header-height));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            padding-bottom: calc(30px + var(--nav-bottom-height));
+            transition: var(--transition);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 51, 51, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 0;
+        }
+
+        .live-time {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            margin: 0 auto;
+            width: 100%;
+            border: 1px solid rgba(255, 51, 51, 0.1);
+        }
+
+        .live-time i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .time-input-container {
+            position: relative;
+        }
+
+        .time-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--light);
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .time-input:hover {
+            border-color: var(--accent);
+        }
+
+        .input-field {
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--light);
+            font-size: 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .input-field input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--success);
+        }
+
+        .btn-primary:hover {
+            background: #3fa72d;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .result-container {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .time-range {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 10px 0;
+        }
+
+        .result-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+        }
+
+        .result-item span:first-child {
+            color: #ccc;
+        }
+
+        .result-item span:last-child {
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #ffc107;
+        }
+
+        .disclaimer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* History Tab Styles */
+        .history-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 51, 51, 0.1);
+            display: none;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .history-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .history-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .history-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .history-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .history-btn i {
+            font-size: 14px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .history-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success {
+            background-color: var(--success);
+        }
+
+        .status-warning {
+            background-color: var(--accent);
+        }
+
+        .status-danger {
+            background-color: var(--danger);
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 0;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-history i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Time Picker Modal */
+        .time-picker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .time-picker {
+            background: var(--dark);
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .time-picker-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .time-selectors {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .time-selector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-selector input {
+            width: 60px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--light);
+            font-size: 18px;
+        }
+
+        .time-selector input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .time-selector label {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .time-picker-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .time-picker-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .time-picker-btn.confirm {
+            background: var(--success);
+        }
+
+        .time-picker-btn.cancel {
+            background: var(--danger);
+        }
+
+        /* Custom Alert/Confirm Modal */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--light);
+            text-align: center;
+        }
+
+        .modal-message {
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 100px;
+            transition: var(--transition);
+        }
+
+        .modal-btn-primary {
+            background: var(--success);
+        }
+
+        .modal-btn-primary:hover {
+            background: #3fa72d;
+        }
+
+        .modal-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-btn-danger {
+            background: var(--danger);
+        }
+
+        .modal-btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-bottom-height);
+            background: rgba(20, 20, 20, 0.95);
+            z-index: 101;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 51, 51, 0.1);
+        }
+
+        .mobile-nav-menu {
+            display: flex;
+            list-style: none;
+            height: 100%;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            color: var(--light-gray);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            width: 100%;
+            text-align: center;
+        }
+
+        .mobile-nav-link i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .mobile-nav-link span {
+            font-size: 12px;
+        }
+
+        .mobile-nav-link:hover, .mobile-nav-link.active {
+            color: var(--accent);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .navbar {
+                width: 70px;
+                overflow: visible;
+            }
+
+            .nav-logo h2, .nav-link span {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 15px;
+            }
+
+            .nav-link i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+
+            .header {
+                left: 70px;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+
+            .header-title h1 {
+                font-size: 22px;
+            }
+
+            .history-table {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .history-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .history-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .modal-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                display: none;
+            }
+            
+            .header {
+                left: 0;
+                height: 60px;
+                padding: 0 15px;
+            }
+
+            .header-title h1 {
+                font-size: 18px;
+            }
+
+            .header-title i {
+                font-size: 24px;
+                margin-right: 10px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 60px;
+                margin-bottom: var(--nav-bottom-height);
+                width: 100%;
+                padding: 20px 15px;
+                min-height: calc(100vh - 60px - var(--nav-bottom-height));
+            }
+
+            .container, .history-container {
+                padding: 20px 15px;
+            }
+
+            .time-range {
+                font-size: 32px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .history-table th, 
+            .history-table td {
+                padding: 8px 10px;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <i class="fas fa-plane-departure"></i>
+            <h2>Aviator Pro</h2>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" data-tab="prediction">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Prediction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-tab="history">
+                    <i class="fas fa-history"></i>
+                    <span>Signal History</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notification</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-title">
+            <i class="fas fa-plane-departure"></i>
+            <h1 id="header-title">AVIATOR HIGH ODD PREDICTION</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Prediction Tab -->
+        <div class="container" id="prediction-tab">
+            <div class="card-header">
+                <div class="live-time">
+                    <i class="fas fa-clock"></i> 
+                    <span id="card-time">--:--:--</span>
+                    <i class="fas fa-calendar-alt" style="margin-left: 15px;"></i> 
+                    <span id="card-date">--/--/----</span>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Select Time:</label>
+                <div class="time-input-container">
+                    <div class="time-input" id="time-input">
+                        <i class="far fa-clock"></i> Select Time
+                    </div>
+                </div>
+                
+                <div class="input-field">
+                    <input type="number" id="odd" placeholder="Enter High Odd Value (e.g., 53.28)" step="0.01" min="1">
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="calculate">
+                    <i class="fas fa-calculator"></i> Calculate Prediction
+                </button>
+                <button class="btn btn-danger" id="clear-all">
+                    <i class="fas fa-trash-alt"></i> Clear All
+                </button>
+            </div>
+            
+            <div class="result-container">
+                <div class="result-title">Predicted Signal Time Range</div>
+                <div class="time-range" id="time-range">00:00 to 00:00</div>
+                
+                <div class="result-details">
+                    <div class="result-item">
+                        <span>Input Time:</span>
+                        <span id="input-time">00:00:00</span>
+                    </div>
+                    <div class="result-item">
+                        <span>High Odd:</span>
+                        <span id="input-odd">0.00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="note">
+                <i class="fas fa-info-circle"></i> Note: Play between these time ranges. If the high odd hasn't appeared at the first time, continue playing until the second time.
+            </div>
+            
+            <div class="disclaimer">
+                <p>This is a simulation for entertainment purposes only. Gambling involves risk. Please play responsibly.</p>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div class="history-container" id="history-tab">
+            <div class="history-header">
+                <h2 class="history-title"><i class="fas fa-history"></i> Signal History</h2>
+                <div class="history-controls">
+                    <button class="history-btn" id="refresh-history">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="history-btn" id="clear-history">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+            </div>
+            
+            <div class="history-content">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Odd Value</th>
+                            <th>Predicted Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- History data will be populated here -->
+                    </tbody>
+                </table>
+                
+                <div class="empty-history" id="empty-history">
+                    <i class="fas fa-inbox"></i>
+                    <p>No prediction history yet</p>
+                    <p>Your calculated predictions will appear here</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <ul class="mobile-nav-menu">
+            <li class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link active" data-tab="prediction">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Prediction</span>
+                </a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link" data-tab="history">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Alerts</span>
+                </a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Time Picker Modal -->
+    <div class="time-picker-modal" id="time-picker-modal">
+        <div class="time-picker">
+            <div class="time-picker-header">Select Time</div>
+            <div class="time-selectors">
+                <div class="time-selector">
+                    <input type="number" id="picker-hours" min="0" max="23" placeholder="HH">
+                    <label>Hours</label>
+                </div>
+                <div class="time-selector">
+                    <input type="number" id="picker-minutes" min="0" max="59" placeholder="MM">
+                    <label>Minutes</label>
+                </div>
+                <div class="time-selector">
+                    <input type="number" id="picker-seconds" min="0" max="59" placeholder="SS">
+                    <label>Seconds</label>
+                </div>
+            </div>
+            <div class="time-picker-buttons">
+                <button class="time-picker-btn cancel" id="time-cancel">Cancel</button>
+                <button class="time-picker-btn confirm" id="time-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert/Confirm Modal -->
+    <div class="custom-modal" id="custom-modal">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-circle modal-icon" id="modal-icon"></i>
+            <h3 class="modal-title" id="modal-title">Title</h3>
+            <p class="modal-message" id="modal-message">Message content goes here.</p>
+            <div class="modal-buttons" id="modal-buttons">
+                <!-- Buttons will be added dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', {hour12: false});
+            const dateStr = now.toLocaleDateString('en-GB');
+            document.getElementById('card-time').textContent = timeStr;
+            document.getElementById('card-date').textContent = dateStr;
+        }
+        
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+        
+        // Time picker functionality
+        const timeInput = document.getElementById('time-input');
+        const timePickerModal = document.getElementById('time-picker-modal');
+        const timeConfirm = document.getElementById('time-confirm');
+        const timeCancel = document.getElementById('time-cancel');
+        const pickerHours = document.getElementById('picker-hours');
+        const pickerMinutes = document.getElementById('picker-minutes');
+        const pickerSeconds = document.getElementById('picker-seconds');
+        const clearAllBtn = document.getElementById('clear-all');
+        
+        timeInput.addEventListener('click', function() {
+            // Clear previous values
+            pickerHours.value = '';
+            pickerMinutes.value = '';
+            pickerSeconds.value = '';
+            timePickerModal.style.display = 'flex';
+            pickerHours.focus();
+        });
+        
+        // Auto-tab between time inputs
+        pickerHours.addEventListener('input', function() {
+            if (this.value.length === 2) {
+                pickerMinutes.focus();
+            }
+        });
+        
+        pickerMinutes.addEventListener('input', function() {
+            if (this.value.length === 2) {
+                pickerSeconds.focus();
+            }
+        });
+        
+        pickerSeconds.addEventListener('input', function() {
+            if (this.value.length === 2) {
+                timeConfirm.focus();
+            }
+        });
+        
+        timeConfirm.addEventListener('click', function() {
+            const hours = pickerHours.value.padStart(2, '0');
+            const minutes = pickerMinutes.value.padStart(2, '0');
+            const seconds = pickerSeconds.value.padStart(2, '0');
+            
+            // Validate time
+            if (hours === '' || minutes === '' || seconds === '') {
+                showAlert('Invalid Time', 'Please enter a valid time');
+                return;
+            }
+            
+            timeInput.innerHTML = `<i class="far fa-clock"></i> ${hours}:${minutes}:${seconds}`;
+            timePickerModal.style.display = 'none';
+        });
+        
+        timeCancel.addEventListener('click', function() {
+            timePickerModal.style.display = 'none';
+        });
+        
+        // Clear all inputs
+        clearAllBtn.addEventListener('click', function() {
+            timeInput.innerHTML = '<i class="far fa-clock"></i> Select Time';
+            document.getElementById('odd').value = '';
+        });
+        
+        // Calculate button event
+        document.getElementById('calculate').addEventListener('click', calculatePrediction);
+        
+        // Input restrictions
+        const inputs = document.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.id === 'picker-hours' && this.value > 23) this.value = 23;
+                if (this.id === 'picker-minutes' && this.value > 59) this.value = 59;
+                if (this.id === 'picker-seconds' && this.value > 59) this.value = 59;
+                if (this.id === 'picker-hours' && this.value < 0) this.value = 0;
+                if (this.id === 'picker-minutes' && this.value < 0) this.value = 0;
+                if (this.id === 'picker-seconds' && this.value < 0) this.value = 0;
+            });
+        });
+        
+        // Tab navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        const predictionTab = document.getElementById('prediction-tab');
+        const historyTab = document.getElementById('history-tab');
+        const headerTitle = document.getElementById('header-title');
+        
+        function switchTab(tab) {
+            // Update active class for desktop nav
+            navLinks.forEach(l => l.classList.remove('active'));
+            document.querySelector(`.nav-link[data-tab="${tab}"]`).classList.add('active');
+            
+            // Update active class for mobile nav
+            mobileNavLinks.forEach(l => l.classList.remove('active'));
+            document.querySelector(`.mobile-nav-link[data-tab="${tab}"]`).classList.add('active');
+            
+            // Switch tabs
+            if (tab === 'prediction') {
+                predictionTab.style.display = 'block';
+                historyTab.style.display = 'none';
+                headerTitle.textContent = 'Aviator High Odd Prediction';
+            } else if (tab === 'history') {
+                predictionTab.style.display = 'none';
+                historyTab.style.display = 'block';
+                headerTitle.textContent = 'Signal History';
+                loadHistory();
+            }
+        }
+        
+        // Desktop navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tab = this.getAttribute('data-tab');
+                if (tab) switchTab(tab);
+            });
+        });
+        
+        // Mobile navigation
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tab = this.getAttribute('data-tab');
+                if (tab) switchTab(tab);
+            });
+        });
+        
+        // History functionality
+        const refreshHistoryBtn = document.getElementById('refresh-history');
+        const clearHistoryBtn = document.getElementById('clear-history');
+        const historyTableBody = document.getElementById('history-table-body');
+        const emptyHistory = document.getElementById('empty-history');
+        
+        refreshHistoryBtn.addEventListener('click', loadHistory);
+        clearHistoryBtn.addEventListener('click', function() {
+            showConfirm(
+                'Clear History', 
+                'Are you sure you want to clear all history?',
+                function() {
+                    localStorage.removeItem('aviatorHistory');
+                    loadHistory();
+                }
+            );
+        });
+        
+        // Load history from localStorage
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('aviatorHistory')) || [];
+            historyTableBody.innerHTML = '';
+            
+            if (history.length === 0) {
+                emptyHistory.style.display = 'block';
+                return;
+            }
+            
+            emptyHistory.style.display = 'none';
+            
+            // Sort history by date (newest first)
+            history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            history.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Format date and time
+                const date = new Date(item.timestamp);
+                const formattedDate = date.toLocaleDateString('en-GB');
+                const formattedTime = date.toLocaleTimeString('en-US', {hour12: false});
+                
+                // Create status indicator
+                let statusClass = 'status-warning';
+                let statusText = 'Pending';
+                
+                // Simple logic to determine status (for demonstration)
+                const hoursDiff = (new Date() - date) / (1000 * 60 * 60);
+                if (hoursDiff > 2) {
+                    statusClass = Math.random() > 0.3 ? 'status-success' : 'status-danger';
+                    statusText = Math.random() > 0.3 ? 'Success' : 'Failed';
+                }
+                
+                row.innerHTML = `
+                    <td>${formattedDate} ${formattedTime}</td>
+                    <td>${item.odd.toFixed(2)}×</td>
+                    <td>${item.predictedTime}</td>
+                    <td><span class="status-indicator ${statusClass}"></span>${statusText}</td>
+                `;
+                
+                historyTableBody.appendChild(row);
+            });
+        }
+        
+        // Calculate prediction based on input
+        function calculatePrediction() {
+            const timeText = document.getElementById('time-input').textContent;
+            const timeMatch = timeText.match(/(\d{2}):(\d{2}):(\d{2})/);
+            
+            if (!timeMatch) {
+                showAlert('Invalid Time', 'Please select a valid time');
+                return;
+            }
+            
+            const hours = parseInt(timeMatch[1]);
+            const minutes = parseInt(timeMatch[2]);
+            const seconds = parseInt(timeMatch[3]);
+            const odd = parseFloat(document.getElementById('odd').value) || 0;
+            
+            if (odd < 1) {
+                showAlert('Invalid Odd Value', 'Please enter a valid odd value (greater than 1)');
+                return;
+            }
+            
+            // Format odd value to extract minutes and seconds
+            const oddStr = odd.toFixed(2);
+            const oddParts = oddStr.split('.');
+            const oddMinutes = parseInt(oddParts[0]) || 0;
+            const oddSeconds = parseInt(oddParts[1]) || 0;
+            
+            // Step 1 (A): Add seconds
+            let totalSeconds = seconds + oddSeconds;
+            let additionalMinutesFromSeconds = Math.floor(totalSeconds / 60);
+            let finalSeconds = totalSeconds % 60;
+            
+            // Step 2 (B): Add minutes (without the extra from seconds yet)
+            let totalMinutes = minutes + oddMinutes;
+            
+            // Step 3: Process minutes to get the decimal part
+            let minutesDecimal = totalMinutes / 60;
+            
+            // Step 4: Extract the first digit after decimal and pad with zero
+            let decimalPart = Math.floor((minutesDecimal % 1) * 10);
+            let signalMinutes = decimalPart.toString().padStart(2, '0');
+            
+            // Step 5: Add the additional minutes from seconds
+            totalMinutes += additionalMinutesFromSeconds;
+            
+            // Step 6: Calculate final hours and minutes
+            let additionalHoursFromMinutes = Math.floor(totalMinutes / 60);
+            let finalMinutes = totalMinutes % 60;
+            
+            // Step 7: Calculate final hours
+            let finalHours = (hours + additionalHoursFromMinutes) % 24;
+            
+            // Format the first time
+            const firstTime = `${finalHours.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}:${finalSeconds.toString().padStart(2, '0')}`;
+            
+            // Calculate second time (add 1 minute to the first time)
+            let secondMinutes = finalMinutes + 1;
+            let secondHours = finalHours;
+            if (secondMinutes >= 60) {
+                secondMinutes = 0;
+                secondHours = (secondHours + 1) % 24;
+            }
+            const secondTime = `${secondHours.toString().padStart(2, '0')}:${secondMinutes.toString().padStart(2, '0')}:${finalSeconds.toString().padStart(2, '0')}`;
+            
+            // Display the result
+            document.getElementById('time-range').textContent = `${firstTime} to ${secondTime}`;
+            document.getElementById('input-time').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('input-odd').textContent = odd.toFixed(2);
+            
+            // Save to history
+            saveToHistory(odd, `${firstTime} to ${secondTime}`);
+        }
+        
+        // Save prediction to history
+        function saveToHistory(odd, predictedTime) {
+            const history = JSON.parse(localStorage.getItem('aviatorHistory')) || [];
+            const newEntry = {
+                timestamp: new Date().toISOString(),
+                odd: odd,
+                predictedTime: predictedTime
+            };
+            
+            history.push(newEntry);
+            localStorage.setItem('aviatorHistory', JSON.stringify(history));
+        }
+        
+        // Show custom alert
+        function showAlert(title, message) {
+            const modal = document.getElementById('custom-modal');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalButtons = document.getElementById('modal-buttons');
+            
+            modalIcon.className = 'fas fa-exclamation-circle modal-icon';
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            
+            modalButtons.innerHTML = `
+                <button class="modal-btn modal-btn-primary" id="modal-ok">OK</button>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            document.getElementById('modal-ok').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // Show custom confirm dialog
+        function showConfirm(title, message, confirmCallback) {
+            const modal = document.getElementById('custom-modal');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalButtons = document.getElementById('modal-buttons');
+            
+            modalIcon.className = 'fas fa-question-circle modal-icon';
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            
+            modalButtons.innerHTML = `
+                <button class="modal-btn modal-btn-danger" id="modal-confirm">Yes</button>
+                <button class="modal-btn modal-btn-secondary" id="modal-cancel">Cancel</button>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            document.getElementById('modal-confirm').addEventListener('click', function() {
+                modal.style.display = 'none';
+                if (confirmCallback) confirmCallback();
+            });
+            
+            document.getElementById('modal-cancel').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // Initialize the page
+        function init() {
+            updateDateTime();
+            loadHistory();
+        }
+        
+        // Run initialization when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
